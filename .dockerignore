@@ -1,0 +1,11 @@
+.git
+.agents
+.codex
+.vscode
+out
+**/__pycache__
+**/*.pyc
+**/*.pyo
+**/*.egg-info
+**/build
+imgui.ini
