@@ -3,7 +3,7 @@
 #
 # The CUDA toolkit is the one in this image. Do not conda-install cuda-toolkit:
 # that package currently resolves to CUDA 13 and breaks the build on new glibc.
-# nvcc uses the image GCC 11. Clang 14 is used only to compile Mitsuba.
+# nvcc uses the image GCC 11. Clang 15 is used only to compile Mitsuba.
 #
 # Build (no GPU required; the arch is pinned below):
 #   docker build -t neural-cone .
@@ -34,13 +34,13 @@ ENV DEBIAN_FRONTEND=noninteractive \
 RUN apt-get update && apt-get install -y --no-install-recommends \
         build-essential \
         ca-certificates \
-        clang-14 \
+        clang-15 \
         cmake \
         curl \
         ffmpeg \
         git \
-        libc++-14-dev \
-        libc++abi-14-dev \
+        libc++-15-dev \
+        libc++abi-15-dev \
         libjpeg-dev \
         libpng-dev \
         ninja-build \
@@ -66,8 +66,9 @@ ENV PATH=/opt/conda/envs/mi3/bin:${PATH} \
 # Checkout origin/v3.5.2 explicitly. A same-named tag would be the upstream release.
 RUN git clone https://github.com/jieruijerry/mitsuba3-old.git /opt/official-submodules/mitsuba3-old \
     && git -C /opt/official-submodules/mitsuba3-old checkout -B "${MITSUBA_REF}" "origin/${MITSUBA_REF}" \
-    && git -C /opt/official-submodules/mitsuba3-old submodule update --init --recursive \
-    && CC=clang-14 CXX=clang++-14 cmake -GNinja \
+    && git -C /opt/official-submodules/mitsuba3-old submodule update --init --recursive
+
+RUN CC=clang-15 CXX=clang++-15 cmake -GNinja \
         -DPython_EXECUTABLE=/opt/conda/envs/mi3/bin/python \
         -DPython_ROOT_DIR=/opt/conda/envs/mi3 \
         -DMI_DEFAULT_VARIANTS="scalar_rgb;cuda_rgb" \
