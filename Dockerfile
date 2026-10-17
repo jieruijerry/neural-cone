@@ -84,13 +84,13 @@ ENV PATH=/opt/official-submodules/mitsuba3-old/build:${PATH} \
 COPY requirements.txt /tmp/requirements.txt
 RUN python -m pip install --upgrade pip \
     && python -m pip install "setuptools==80.9.0" wheel ninja \
-    && python -m pip install torch==2.11.0 --index-url https://download.pytorch.org/whl/cu126 \
+    && python -m pip install torch==2.11.0 torchvision==0.26.0 --index-url https://download.pytorch.org/whl/cu126 \
     && python -m pip install -r /tmp/requirements.txt \
     && python -m pip install "setuptools==80.9.0" "cuda-python==12.6.2.post1" \
     && export TCNN_CUDA_ARCHITECTURES="$(printf '%s' "${TORCH_CUDA_ARCH_LIST}" | tr -d '.')" \
     && python -m pip install --no-build-isolation \
         "git+https://github.com/NVlabs/tiny-cuda-nn.git@${TCNN_COMMIT}#subdirectory=bindings/torch" \
-    && python -c "import torch; v=torch.version.cuda; assert v.startswith('12.6'), v"
+    && python -c "import torch, torchvision; from importlib.metadata import version; tv=version('torchvision'); assert torch.version.cuda.startswith('12.6'), torch.version.cuda; assert 'cu126' in tv, tv"
 
 WORKDIR /opt/neural-cone
 COPY . /opt/neural-cone

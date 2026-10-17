@@ -22,6 +22,33 @@ At interactive rates the paper uses T = 32 glossy samples per shading point (K =
 
 ## Installation
 
+### Docker
+
+The tested environment is published as a prebuilt image: Ubuntu 22.04, CUDA 12.6.3, Python 3.12, PyTorch 2.11.0+cu126, tiny-cuda-nn, and our Mitsuba 3.5.2 build (`cuda_rgb`). The image targets compute capability 8.6 (for example an RTX 3090).
+
+On the host, install an NVIDIA driver >= 560, Docker, and the [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html). CUDA does not need to be installed on the host.
+
+```bash
+git clone https://github.com/jieruijerry/neural-cone.git
+cd neural-cone
+docker pull ghcr.io/jieruijerry/neural-cone:fixed
+docker run --gpus all -it --rm \
+  -v "$PWD:/opt/neural-cone" \
+  ghcr.io/jieruijerry/neural-cone:fixed
+```
+
+Run this from the repository root. The shell starts in `/opt/neural-cone` with the `mi3` environment and Mitsuba already on `PATH`. That path is the cloned repository, so edits on the host are visible in the container, and checkpoints written to `out/` stay in the clone.
+
+```bash
+python train.py -c ncr -s veach-ajar
+```
+
+To build the same image from this repository instead of pulling it:
+
+```bash
+docker build -t neural-cone .
+```
+
 ### Python environment
 
 ```bash
